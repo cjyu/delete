@@ -14,8 +14,8 @@ from __future__ import print_function
 from keras.callbacks import LambdaCallback
 from keras.models import Sequential
 from keras.layers import Dense, Activation
-from keras.layers import LSTM
-from keras.optimizers import RMSprop
+from keras.layers import LSTM, Dropout
+from keras.optimizers import RMSprop, Adam
 from keras.utils.data_utils import get_file
 import numpy as np
 import random
@@ -54,7 +54,12 @@ for i, sentence in enumerate(sentences):
 # build the model: a single LSTM
 print('Build model...')
 model = Sequential()
-model.add(LSTM(128, input_shape=(maxlen, len(chars))))
+model.add(LSTM(256, input_shape=(maxlen, len(chars))))
+model.add(Dropout(rate = 0.1))
+model.add(LSTM(128))
+model.add(Dropout(rate = 0.2))
+model.add(LSTM(64))
+model.add(Dropout(rate = 0.2))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
