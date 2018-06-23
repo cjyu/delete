@@ -55,12 +55,40 @@ for i, sentence in enumerate(sentences):
 # build the model: a single LSTM
 print('Build model...')
 model = Sequential()
+model.add(LSTM(units=512, 
+        input_shape=(maxlen, len(chars)), 
+        kernel_regularizer=l2(0.01), 
+        recurrent_regularizer=l2(0.01), 
+        dropout=0.1, 
+        recurrent_dropout=0.1,
+        return_sequences=True))
+
 model.add(LSTM(units=256, 
-    input_shape=(maxlen, len(chars)), 
-    kernel_regularizer=l2(0.01), 
-    recurrent_regularizer=l2(0.01), 
-    dropout=0.1, 
-    recurrent_dropout=0.1))
+        kernel_regularizer=l2(0.01), 
+        recurrent_regularizer=l2(0.01), 
+        dropout=0.1, 
+        recurrent_dropout=0.1,
+        return_sequences=True))
+
+model.add(LSTM(units=128, 
+        kernel_regularizer=l2(0.01), 
+        recurrent_regularizer=l2(0.01), 
+        dropout=0.1, 
+        recurrent_dropout=0.1,
+        return_sequences=True))
+
+model.add(LSTM(units=64, 
+        kernel_regularizer=l2(0.01), 
+        recurrent_regularizer=l2(0.01), 
+        dropout=0.1, 
+        recurrent_dropout=0.1,
+        return_sequences=True))
+
+model.add(LSTM(units=32, 
+        kernel_regularizer=l2(0.01), 
+        recurrent_regularizer=l2(0.01), 
+        dropout=0.1, 
+        recurrent_dropout=0.1))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
@@ -94,7 +122,7 @@ def on_epoch_end(epoch, logs):
         print('----- Generating with seed: "' + sentence + '"')
         sys.stdout.write(generated)
 
-        for i in range(1000):
+        for i in range(400):
             x_pred = np.zeros((1, maxlen, len(chars)))
             for t, char in enumerate(sentence):
                 x_pred[0, t, char_indices[char]] = 1.
@@ -114,5 +142,5 @@ print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
 
 model.fit(x, y,
           batch_size=128,
-          epochs=60,
+          epochs=600,
           callbacks=[print_callback])
